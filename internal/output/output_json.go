@@ -18,6 +18,7 @@ func OutputJSON(results []operations.ResultLogStreamDTO) {
 			"total":          result.Total,
 			"healthScore":    result.HealthScore,
 			"errorThreshold": result.ErrorThreshold,
+			"healthy":        result.Healthy,
 		})
 	}
 	jsonOutput, err := json.MarshalIndent(jsonFormattedResults, "", "  ")

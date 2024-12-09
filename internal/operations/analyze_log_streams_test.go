@@ -18,7 +18,7 @@ func TestAnalyzeLogStreams(t *testing.T) {
 	results, _ := AnalyzeLogStreams(allLogStreams, positiveLogStreams, 0.1)
 
 	expectedResults := []ResultLogStreamDTO{
-		{ContainerName: "def", Namespace: "abc", TotalErrors: 2, Total: 10, HealthScore: 0.8, ErrorThreshold: 0.1},
+		{ContainerName: "def", Namespace: "abc", TotalErrors: 2, Total: 10, HealthScore: 0.8, ErrorThreshold: 0.1, Healthy: 1},
 	}
 
 	if !reflect.DeepEqual(results, expectedResults) {
