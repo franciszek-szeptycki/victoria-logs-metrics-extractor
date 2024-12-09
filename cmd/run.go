@@ -6,6 +6,8 @@ import (
 	"main/internal/config"
 	"main/internal/constants"
 	"main/internal/external"
+	"main/internal/operations"
+	"main/internal/output"
 )
 
 var runCmd = &cobra.Command{
@@ -13,11 +15,17 @@ var runCmd = &cobra.Command{
 	Short: "Runs the tool with data from environment variables",
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg := config.LoadConfig()
-		fmt.Printf("VictoriaLogsURL: %s\n", cfg.VictoriaLogsURL)
-		fmt.Printf("LogTimeframeMinutes: %d\n", cfg.LogTimeframeMinutes)
 
-		external.FetchStreamsHits(cfg, constants.AllStreamsHitsQuery)
-		external.FetchStreamsHits(cfg, constants.PositiveHitsQuery)
+		allStreams, _ := external.FetchStreamsHits(cfg, constants.AllStreamsHitsQuery)
+		positiveStreams, _ := external.FetchStreamsHits(cfg, constants.PositiveHitsQuery)
+
+		results, err := operations.AnalyzeLogStreams(allStreams, positiveStreams, cfg.ErrorThreshold)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		output.OutputJSON(results)
 	},
 }
 
