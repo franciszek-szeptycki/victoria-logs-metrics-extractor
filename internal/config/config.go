@@ -2,6 +2,7 @@ package config
 
 import (
 	"log"
+	"main/internal/constants"
 	"os"
 	"strconv"
 )
@@ -12,12 +13,12 @@ type Config struct {
 }
 
 func LoadConfig() Config {
-	victoriaLogsURL := os.Getenv("VICTORIA_LOGS_URL")
+	victoriaLogsURL := os.Getenv(constants.VictoriaLogsURLEnvVar)
 	if victoriaLogsURL == "" {
 		log.Fatal("Environment variable VICTORIA_LOGS_URL is required but not set")
 	}
 
-	logTimeframeMinutesStr := os.Getenv("LOG_TIMEFRAME_MINUTES")
+	logTimeframeMinutesStr := os.Getenv(constants.LogTimeframeMinutesEnvVar)
 	if logTimeframeMinutesStr == "" {
 		log.Fatal("Environment variable LOG_TIMEFRAME_MINUTES is required but not set")
 	}
