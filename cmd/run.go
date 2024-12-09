@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"main/internal/config"
-	"main/internal/connectors"
+	"main/internal/constants"
+	"main/internal/external"
 )
 
 var runCmd = &cobra.Command{
@@ -15,9 +16,8 @@ var runCmd = &cobra.Command{
 		fmt.Printf("VictoriaLogsURL: %s\n", cfg.VictoriaLogsURL)
 		fmt.Printf("LogTimeframeMinutes: %d\n", cfg.LogTimeframeMinutes)
 
-		victoriaLogsStreamsConnector := connectors.NewVictoriaLogsStreamsConnector(cfg.VictoriaLogsURL)
-		victoriaLogsStreamsConnector.FetchAllStreamsHits()
-		victoriaLogsStreamsConnector.FetchPositiveStreamsHits()
+		external.FetchStreamsHits(cfg, constants.AllStreamsHitsQuery)
+		external.FetchStreamsHits(cfg, constants.PositiveHitsQuery)
 	},
 }
 
