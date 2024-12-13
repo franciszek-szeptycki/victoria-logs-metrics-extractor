@@ -7,21 +7,8 @@ import (
 	"os"
 )
 
-func OutputJSON(results []operations.ResultLogStreamDTO) {
-
-	jsonFormattedResults := []map[string]interface{}{}
-	for _, result := range results {
-		jsonFormattedResults = append(jsonFormattedResults, map[string]interface{}{
-			"containerName":  result.ContainerName,
-			"namespace":      result.Namespace,
-			"totalErrors":    result.TotalErrors,
-			"total":          result.Total,
-			"healthScore":    result.HealthScore,
-			"errorThreshold": result.ErrorThreshold,
-			"healthy":        result.Healthy,
-		})
-	}
-	jsonOutput, err := json.MarshalIndent(jsonFormattedResults, "", "  ")
+func PresentJSON(results []operations.ResultLogStreamDTO) {
+	jsonOutput, err := json.MarshalIndent(results, "", "  ")
 	if err != nil {
 		log.Fatalf("Error marshalling JSON: %s", err)
 	}

@@ -25,7 +25,7 @@ var runCmd = &cobra.Command{
 			return
 		}
 
-		output.OutputJSON(results)
+		output.PresentJSON(results)
 	},
 }
 

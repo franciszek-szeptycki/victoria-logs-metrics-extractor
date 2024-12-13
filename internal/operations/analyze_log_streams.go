@@ -5,13 +5,13 @@ import (
 )
 
 type ResultLogStreamDTO struct {
-	ContainerName  string
-	Namespace      string
-	TotalErrors    int
-	Total          int
-	HealthScore    float32
-	ErrorThreshold float32
-	Healthy        int
+	ContainerName  string  `json:"containerName"`
+	Namespace      string  `json:"namespace"`
+	TotalErrors    int     `json:"totalErrors"`
+	Total          int     `json:"total"`
+	HealthScore    float32 `json:"healthScore"`
+	ErrorThreshold float32 `json:"errorThreshold"`
+	Healthy        int     `json:"healthy"`
 }
 
 func AnalyzeLogStreams(allStreams []external.LogStreamDTO, positiveStreams []external.LogStreamDTO, errorThreshold float32) ([]ResultLogStreamDTO, error) {
