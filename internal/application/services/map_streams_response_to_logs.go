@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"main/internal/application/selectors"
-	"main/internal/infrastructure/connectors"
 	"regexp"
 )
 
@@ -14,7 +13,7 @@ func NewFetchLogsStreamsMapper() *FetchLogsStreamsMapper {
 	return &FetchLogsStreamsMapper{}
 }
 
-func (m *FetchLogsStreamsMapper) MapStreamsResponseToLogs(input connectors.FetchStreamsResponse) []selectors.LogsStreamsDTO {
+func (m *FetchLogsStreamsMapper) MapStreamsResponseToLogs(input selectors.FetchStreamsResponse) []selectors.LogsStreamsDTO {
 
 	fmt.Println("input", input)
 

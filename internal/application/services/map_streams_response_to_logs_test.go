@@ -3,14 +3,13 @@ package services
 import (
 	"encoding/json"
 	"main/internal/application/selectors"
-	"main/internal/infrastructure/connectors"
 	"testing"
 )
 
 func TestFetchLogsStreamsMapper(t *testing.T) {
 	jsonText := `{"values":[{"value":"{}","hits":31},{"value":"{kubernetes.container_name=\"coredns\",kubernetes.pod_namespace=\"kube-system\"}","hits":4},{"value":"{kubernetes.container_name=\"mariadb\",kubernetes.pod_namespace=\"paris\"}","hits":5}]}`
 
-	var input connectors.FetchStreamsResponse
+	var input selectors.FetchStreamsResponse
 	err := json.Unmarshal([]byte(jsonText), &input)
 	if err != nil {
 		t.Errorf("Error marshalling JSON: %s", err)

@@ -4,11 +4,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"main/internal/application/selectors"
 	"main/internal/constants"
 	"main/internal/infrastructure/config"
 
 	"github.com/go-resty/resty/v2"
 )
+
+type httpRequest struct {
+	URL  string
+	Body map[string]string
+}
+
+type httpResponse struct {
+	Status int
+	Body   string
+}
 
 type VictoriaLogsStreamsConnector struct{}
 
@@ -16,7 +27,7 @@ func NewVictoriaLogsStreamsConnector() *VictoriaLogsStreamsConnector {
 	return &VictoriaLogsStreamsConnector{}
 }
 
-func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg config.Config, query string) FetchStreamsResponse {
+func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg config.Config, query string) selectors.FetchStreamsResponse {
 	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.StreamsPath)
 	payload := map[string]string{
 		"query": query,
@@ -32,7 +43,7 @@ func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg config.Config, query str
 		log.Fatalf("Error fetching streams: %s", httpResponse.Body)
 	}
 
-	var streamsResponse FetchStreamsResponse
+	var streamsResponse selectors.FetchStreamsResponse
 	err := json.Unmarshal([]byte(httpResponse.Body), &streamsResponse)
 	if err != nil {
 		log.Fatalf("Error unmarshalling streams response: %s", err)
