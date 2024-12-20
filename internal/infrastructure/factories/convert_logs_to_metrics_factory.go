@@ -3,7 +3,6 @@ package factories
 import (
 	"main/internal/application/services"
 	"main/internal/application/use_cases"
-	"main/internal/infrastructure/config"
 	"main/internal/infrastructure/connectors"
 	"main/internal/infrastructure/presenters"
 )
@@ -14,12 +13,9 @@ func NewConvertLogsToMetricsFactory() *ConvertLogsToMetricsFactory {
 	return &ConvertLogsToMetricsFactory{}
 }
 
-func (f *ConvertLogsToMetricsFactory) Execute() *use_cases.ConvertLogsToMetricsUseCase {
-	// Load configuration
-	cfg := config.LoadConfig()
-
+func (f *ConvertLogsToMetricsFactory) Execute(victoriaLogsUrl string) *use_cases.ConvertLogsToMetricsUseCase {
 	// Create instances of the required components
-	connector := connectors.NewVictoriaLogsStreamsConnector(cfg.VictoriaLogsURL, cfg.LogTimeframeMinutes)
+	connector := connectors.NewVictoriaLogsStreamsConnector(victoriaLogsUrl)
 	analyzeLogStreamsService := services.NewAnalyzeLogStreamsService()
 	jsonPresenter := presenters.NewJSONPresenter()
 

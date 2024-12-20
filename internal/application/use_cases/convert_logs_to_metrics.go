@@ -24,14 +24,29 @@ func NewConvertLogsToMetricsUseCase(victoriaLogsConnector *connectors.VictoriaLo
 }
 
 func (a *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
-	allstreams, _ := a.victoriaLogsConnector.FetchStreams(constants.AllStreamsHitsQuery)
-	positivestreams, _ := a.victoriaLogsConnector.FetchStreams(constants.PositiveHitsQuery)
+	logTimeframe := cfg.LogTimeframeMinutes
+	// errorThreshold := cfg.ErrorThreshold
+	positiveHitsQuery := constants.PositiveHitsQuery
+	allHitsQuery := constants.AllStreamsHitsQuery
 
-	results, err := a.analyzeLogStreamsService.AnalyzeLogStreams(allstreams, positivestreams, cfg.ErrorThreshold)
+	allstreams, err := a.victoriaLogsConnector.FetchStreams(allHitsQuery, logTimeframe)
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
+	positivestreams, err := a.victoriaLogsConnector.FetchStreams(positiveHitsQuery, logTimeframe)
 	if err != nil {
 		log.Fatalln(err)
 		return
 	}
 
-	a.jsonPresenter.Present(results)
+	log.Println("All streams: ", allstreams)
+	log.Println("Positive streams: ", positivestreams)
+	// results, err := a.analyzeLogStreamsService.AnalyzeLogStreams(allstreams, positivestreams, errorThreshold)
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// 	return
+	// }
+
+	// a.jsonPresenter.Present(results)
 }
