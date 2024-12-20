@@ -28,16 +28,8 @@ func NewConvertLogsToMetricsUseCase(
 }
 
 func (c *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
-	allstreams, err := c.victoriaLogsConnector.FetchStreams(cfg, constants.AllStreamsHitsQuery)
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
-	positivestreams, err := c.victoriaLogsConnector.FetchStreams(cfg, constants.PositiveHitsQuery)
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
+	allstreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.AllStreamsHitsQuery)
+	positivestreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.PositiveHitsQuery)
 
 	log.Println("All streams: ", allstreams)
 	log.Println("Positive streams: ", positivestreams)

@@ -12,7 +12,7 @@ func NewFetchLogsStreamsMapper() *FetchLogsStreamsMapper {
 	return &FetchLogsStreamsMapper{}
 }
 
-func (m *FetchLogsStreamsMapper) MapResponseToDTO(input []connectors.FetchStreamsResponseValueDTO) []selectors.LogsStreamsDTO {
+func (m *FetchLogsStreamsMapper) MapResponseToDTO(input []connectors.FetchStreamsResponse) []selectors.LogsStreamsDTO {
 
 	fmt.Println("input", input)
 

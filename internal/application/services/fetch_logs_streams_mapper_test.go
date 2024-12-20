@@ -6,23 +6,7 @@ import (
 )
 
 func TestFetchLogsStreamsMapper(t *testing.T) {
-	// {
-	//   "values": [
-	//     {
-	//       "value": "{}",
-	//       "hits": 31
-	//     },
-	//     {
-	//       "value": "{kubernetes.container_name=\"coredns\",kubernetes.pod_namespace=\"kube-system\"}",
-	//       "hits": 4
-	//     },
-	//     {
-	//       "value": "{kubernetes.container_name=\"mariadb\",kubernetes.pod_namespace=\"paris\"}",
-	//       "hits": 4
-	//     }
-	//   ]
-	// }
-	input := FetchLogsStreamsResponse{
+	input := selectors.FetchLogsStreamsResponse{
 		Values: []FetchLogsStreamsResponseValue{
 			{
 				Value: "{}",
