@@ -1,25 +1,28 @@
 package factories
 
 import (
+	"main/internal/application/services"
 	"main/internal/application/use_cases"
 	"main/internal/infrastructure/config"
 	"main/internal/infrastructure/connectors"
+	"main/internal/infrastructure/presenters"
 )
 
-type AnalyzeMetricsFactory struct{}
+type ConvertLogsToMetricsFactory struct{}
 
-func NewAnalyzeMetricsFactory() *AnalyzeMetricsFactory {
-	return &AnalyzeMetricsFactory{}
+func NewConvertLogsToMetricsFactory() *ConvertLogsToMetricsFactory {
+	return &ConvertLogsToMetricsFactory{}
 }
 
-func (f *AnalyzeMetricsFactory) Execute() *AnalyzeMetrics {
-
+func (f *ConvertLogsToMetricsFactory) Execute() *use_cases.ConvertLogsToMetricsUseCase {
+	// Load configuration
 	cfg := config.LoadConfig()
 
+	// Create instances of the required components
 	connector := connectors.NewVictoriaLogsStreamsConnector(cfg.VictoriaLogsURL, cfg.LogTimeframeMinutes)
+	analyzeLogStreamsService := services.NewAnalyzeLogStreamsService()
+	jsonPresenter := presenters.NewJSONPresenter()
 
-	convertLogsToMetricsUseCase := use_cases.ConvertLogsToMetricsUseCase{
-		victoriaLogsStreamsConnector: connector,
-	}
-
+	// Return the new use case
+	return use_cases.NewConvertLogsToMetricsUseCase(connector, analyzeLogStreamsService, jsonPresenter)
 }

@@ -34,7 +34,7 @@ func (v *VictoriaLogsStreamsConnector) FetchStreams(query string) ([]dtos.LogStr
 	response, err := makePostRequest(fullURL, payload)
 	if err != nil {
 		log.Fatalf("Error fetching streams: %s", err)
-		return []LogStreamDTO{}, err
+		return []dtos.LogStreamDTO{}, err
 	}
 
 	return mapStreamResponseToDTO(response)
@@ -56,7 +56,7 @@ func makePostRequest(fullURL string, payload map[string]string) (string, error) 
 	return resp.String(), nil
 }
 
-func mapStreamResponseToDTO(response string) ([]LogStreamDTO, error) {
+func mapStreamResponseToDTO(response string) ([]dtos.LogStreamDTO, error) {
 	type ValueItem struct {
 		Value string `json:"value"`
 		Hits  int    `json:"hits"`
@@ -72,11 +72,11 @@ func mapStreamResponseToDTO(response string) ([]LogStreamDTO, error) {
 
 	re := regexp.MustCompile(`kubernetes\.container_name="([^"]+)",kubernetes\.pod_namespace="([^"]+)"`)
 
-	var results []LogStreamDTO
+	var results []dtos.LogStreamDTO
 	for _, item := range input.Values {
 		matches := re.FindStringSubmatch(item.Value)
 		if len(matches) == 3 {
-			results = append(results, LogStreamDTO{
+			results = append(results, dtos.LogStreamDTO{
 				KubernetesContainerName: matches[1],
 				KubernetesNamespace:     matches[2],
 				Hits:                    item.Hits,

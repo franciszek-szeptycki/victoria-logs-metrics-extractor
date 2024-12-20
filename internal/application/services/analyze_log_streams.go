@@ -6,6 +6,10 @@ import (
 
 type AnalyzeLogStreamsService struct{}
 
+func NewAnalyzeLogStreamsService() *AnalyzeLogStreamsService {
+	return &AnalyzeLogStreamsService{}
+}
+
 func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []dtos.LogStreamDTO, positiveStreams []dtos.LogStreamDTO, errorThreshold float32) ([]dtos.ResultLogStreamDTO, error) {
 
 	var results []dtos.ResultLogStreamDTO

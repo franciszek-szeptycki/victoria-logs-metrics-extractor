@@ -10,9 +10,17 @@ import (
 )
 
 type ConvertLogsToMetricsUseCase struct {
-	victoriaLogsConnector    connectors.VictoriaLogsStreamsConnector
-	analyzeLogStreamsService services.AnalyzeLogStreamsService
-	jsonPresenter            presenters.JSONPresenter
+	victoriaLogsConnector    *connectors.VictoriaLogsStreamsConnector
+	analyzeLogStreamsService *services.AnalyzeLogStreamsService
+	jsonPresenter            *presenters.JSONPresenter
+}
+
+func NewConvertLogsToMetricsUseCase(victoriaLogsConnector *connectors.VictoriaLogsStreamsConnector, analyzeLogStreamsService *services.AnalyzeLogStreamsService, jsonPresenter *presenters.JSONPresenter) *ConvertLogsToMetricsUseCase {
+	return &ConvertLogsToMetricsUseCase{
+		victoriaLogsConnector:    victoriaLogsConnector,
+		analyzeLogStreamsService: analyzeLogStreamsService,
+		jsonPresenter:            jsonPresenter,
+	}
 }
 
 func (a *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
@@ -25,5 +33,5 @@ func (a *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
 		return
 	}
 
-	output.presentjson(results)
+	a.jsonPresenter.Present(results)
 }
