@@ -7,6 +7,7 @@ import (
 
 func main() {
 	cfg := config.LoadEnv()
+
 	factory := factories.NewConvertLogsToMetricsFactory()
 
 	useCase := factory.Execute()
