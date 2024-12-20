@@ -14,11 +14,13 @@ import (
 type VictoriaLogsStreamsConnector struct {
 	url                 string
 	logTimeframeMinutes int
-	errorThreshold      float32
 }
 
-func NewVictoriaLogsStreamsConnector() *VictoriaLogsStreamsConnector {
-	return &VictoriaLogsStreamsConnector{}
+func NewVictoriaLogsStreamsConnector(url string, logTimeframeMinutes int) *VictoriaLogsStreamsConnector {
+	return &VictoriaLogsStreamsConnector{
+    	  url: url,
+    	  logTimeframeMinutes: logTimeframeMinutes,
+	}
 }
 
 func (v *VictoriaLogsStreamsConnector) FetchStreams(query string) (FetchStreamsResponseValueDTO, error) {
