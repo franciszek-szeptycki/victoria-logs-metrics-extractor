@@ -1,9 +1,16 @@
 package main
 
 import (
-	"main/cmd"
+	"main/internal/infrastructure/config"
+	"main/internal/infrastructure/factories"
 )
 
 func main() {
-	cmd.Execute()
+	cfg := config.Init()
+
+	factory := factories.NewConvertLogsToMetricsFactory()
+
+	useCase := factory.Execute()
+
+	useCase.Execute(cfg)
 }

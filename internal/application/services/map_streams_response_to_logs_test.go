@@ -1,34 +1,23 @@
 package services
 
 import (
+	"encoding/json"
 	"main/internal/application/selectors"
+	"main/internal/infrastructure/connectors"
 	"testing"
 )
 
 func TestFetchLogsStreamsMapper(t *testing.T) {
-	input := selectors.FetchLogsStreamsResponse{
-		Values: []FetchLogsStreamsResponseValue{
-			{
-				Value: "{}",
-				Hits:  31,
-			},
-			{
-				Value: "{kubernetes.container_name=\"coredns\",kubernetes.pod_namespace=\"kube-system\"}",
-				Hits:  4,
-			},
-			{
-				Value: "{kubernetes.container_name=\"mariadb\",kubernetes.pod_namespace=\"paris\"}",
-				Hits:  5,
-			},
-		},
+	jsonText := `{"values":[{"value":"{}","hits":31},{"value":"{kubernetes.container_name=\"coredns\",kubernetes.pod_namespace=\"kube-system\"}","hits":4},{"value":"{kubernetes.container_name=\"mariadb\",kubernetes.pod_namespace=\"paris\"}","hits":5}]}`
+
+	var input connectors.FetchStreamsResponse
+	err := json.Unmarshal([]byte(jsonText), &input)
+	if err != nil {
+		t.Errorf("Error marshalling JSON: %s", err)
 	}
 
 	expectedOutput := []selectors.LogsStreamsDTO{
 		{
-			KubernetesNamespace:     "",
-			KubernetesContainerName: "",
-			Hits:                    31,
-		}, {
 			KubernetesNamespace:     "kube-system",
 			KubernetesContainerName: "coredns",
 			Hits:                    4,
@@ -40,9 +29,9 @@ func TestFetchLogsStreamsMapper(t *testing.T) {
 	}
 
 	mapper := NewFetchLogsStreamsMapper()
-	output := mapper.MapResponseToDTO(input)
+	output := mapper.MapStreamsResponseToLogs(input)
 
-	if !compareLogsStreamsDTOs(output, expectedOutput) {
+	if !compareLogsStreamsDTOs(expectedOutput, output) {
 		t.Errorf("Expected output: %v, got: %v", expectedOutput, output)
 	}
 }

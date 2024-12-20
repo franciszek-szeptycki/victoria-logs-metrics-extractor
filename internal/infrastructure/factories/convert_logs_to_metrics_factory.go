@@ -16,9 +16,10 @@ func NewConvertLogsToMetricsFactory() *ConvertLogsToMetricsFactory {
 func (f *ConvertLogsToMetricsFactory) Execute() *use_cases.ConvertLogsToMetricsUseCase {
 	// Create instances of the required components
 	connector := connectors.NewVictoriaLogsStreamsConnector()
+	mapStreamsResponseToLogs := &services.FetchLogsStreamsMapper{}
 	analyzeLogStreamsService := &services.AnalyzeLogStreamsService{}
 	jsonPresenter := &presenters.JSONPresenter{}
 
 	// Return the new use case
-	return use_cases.NewConvertLogsToMetricsUseCase(connector, analyzeLogStreamsService, jsonPresenter)
+	return use_cases.NewConvertLogsToMetricsUseCase(connector, mapStreamsResponseToLogs, analyzeLogStreamsService, jsonPresenter)
 }
