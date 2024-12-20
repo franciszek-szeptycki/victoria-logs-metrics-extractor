@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func Init() selectors.Config {
+func LoadEnv() selectors.Config {
 	victoriaLogsURL := loadVictoriaLogsURL()
 	logTimeframeMinutes := loadLogTimeframeMinutes()
 	errorThreshold := loadErrorThreshold()
