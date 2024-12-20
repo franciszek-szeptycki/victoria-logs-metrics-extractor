@@ -6,22 +6,16 @@ import (
 	"strconv"
 )
 
-type Config struct {
+var (
 	VictoriaLogsURL     string
 	LogTimeframeMinutes int
 	ErrorThreshold      float32
-}
+)
 
-func LoadConfig() Config {
-	victoriaLogsURL := loadVictoriaLogsURL()
-	logTimeframeMinutes := loadLogTimeframeMinutes()
-	errorThreshold := loadErrorThreshold()
-
-	return Config{
-		VictoriaLogsURL:     victoriaLogsURL,
-		LogTimeframeMinutes: logTimeframeMinutes,
-		ErrorThreshold:      errorThreshold,
-	}
+func Init() {
+	VictoriaLogsURL = loadVictoriaLogsURL()
+	LogTimeframeMinutes = loadLogTimeframeMinutes()
+	ErrorThreshold = loadErrorThreshold()
 }
 
 func loadVictoriaLogsURL() string {

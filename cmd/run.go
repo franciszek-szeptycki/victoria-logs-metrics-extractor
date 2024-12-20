@@ -12,16 +12,16 @@ var runCmd = &cobra.Command{
 	Short: "Runs the tool with data from environment variables",
 	Run: func(cmd *cobra.Command, args []string) {
 		// Load the environment variables
-		cfg := config.LoadConfig()
+		config.Init()
 
 		// Create the factory
 		factory := factories.NewConvertLogsToMetricsFactory()
 
 		// Create the use case
-		useCase := factory.Execute(cfg.VictoriaLogsURL)
+		useCase := factory.Execute()
 
 		// Run the use case
-		useCase.Execute(cfg)
+		useCase.Execute()
 	},
 }
 

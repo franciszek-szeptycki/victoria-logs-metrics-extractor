@@ -1,4 +1,4 @@
-package dtos
+package selectors
 
 type ResultLogStreamDTO struct {
 	ContainerName  string  `json:"containerName"`

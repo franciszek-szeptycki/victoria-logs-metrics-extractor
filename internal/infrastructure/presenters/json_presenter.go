@@ -3,7 +3,7 @@ package presenters
 import (
 	"encoding/json"
 	"log"
-	"main/internal/application/dtos"
+	"main/internal/application/selectors"
 	"os"
 )
 
@@ -13,7 +13,7 @@ func NewJSONPresenter() *JSONPresenter {
 	return &JSONPresenter{}
 }
 
-func (j *JSONPresenter) Present(results []dtos.ResultLogStreamDTO) {
+func (j *JSONPresenter) Present(results []selectors.ResultLogStreamDTO) {
 	jsonOutput, err := json.MarshalIndent(results, "", "  ")
 	if err != nil {
 		log.Fatalf("Error marshalling JSON: %s", err)

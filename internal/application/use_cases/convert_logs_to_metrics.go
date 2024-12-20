@@ -4,7 +4,6 @@ import (
 	"log"
 	"main/internal/application/services"
 	"main/internal/constants"
-	"main/internal/infrastructure/config"
 	"main/internal/infrastructure/connectors"
 	"main/internal/infrastructure/presenters"
 )
@@ -15,7 +14,11 @@ type ConvertLogsToMetricsUseCase struct {
 	jsonPresenter            *presenters.JSONPresenter
 }
 
-func NewConvertLogsToMetricsUseCase(victoriaLogsConnector *connectors.VictoriaLogsStreamsConnector, analyzeLogStreamsService *services.AnalyzeLogStreamsService, jsonPresenter *presenters.JSONPresenter) *ConvertLogsToMetricsUseCase {
+func NewConvertLogsToMetricsUseCase(
+	victoriaLogsConnector *connectors.VictoriaLogsStreamsConnector,
+	analyzeLogStreamsService *services.AnalyzeLogStreamsService,
+	jsonPresenter *presenters.JSONPresenter,
+) *ConvertLogsToMetricsUseCase {
 	return &ConvertLogsToMetricsUseCase{
 		victoriaLogsConnector:    victoriaLogsConnector,
 		analyzeLogStreamsService: analyzeLogStreamsService,
@@ -23,18 +26,13 @@ func NewConvertLogsToMetricsUseCase(victoriaLogsConnector *connectors.VictoriaLo
 	}
 }
 
-func (a *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
-	logTimeframe := cfg.LogTimeframeMinutes
-	// errorThreshold := cfg.ErrorThreshold
-	positiveHitsQuery := constants.PositiveHitsQuery
-	allHitsQuery := constants.AllStreamsHitsQuery
-
-	allstreams, err := a.victoriaLogsConnector.FetchStreams(allHitsQuery, logTimeframe)
+func (c *ConvertLogsToMetricsUseCase) Execute() {
+	allstreams, err := c.victoriaLogsConnector.FetchStreams(constants.AllStreamsHitsQuery)
 	if err != nil {
 		log.Fatalln(err)
 		return
 	}
-	positivestreams, err := a.victoriaLogsConnector.FetchStreams(positiveHitsQuery, logTimeframe)
+	positivestreams, err := c.victoriaLogsConnector.FetchStreams(constants.PositiveHitsQuery)
 	if err != nil {
 		log.Fatalln(err)
 		return

@@ -1,18 +1,12 @@
 package services
 
-import (
-	"main/internal/application/dtos"
-)
+import "main/internal/application/selectors"
 
 type AnalyzeLogStreamsService struct{}
 
-func NewAnalyzeLogStreamsService() *AnalyzeLogStreamsService {
-	return &AnalyzeLogStreamsService{}
-}
+func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []selectors.LogsStreamsDTO, positiveStreams []selectors.LogsStreamsDTO, errorThreshold float32) ([]selectors.ResultLogStreamDTO, error) {
 
-func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []dtos.LogStreamDTO, positiveStreams []dtos.LogStreamDTO, errorThreshold float32) ([]dtos.ResultLogStreamDTO, error) {
-
-	var results []dtos.ResultLogStreamDTO
+	var results []selectors.ResultLogStreamDTO
 	for _, stream := range allStreams {
 		positiveStream := retrievePositiveLogStreams(positiveStreams, stream)
 
@@ -22,7 +16,7 @@ func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []dtos.LogStream
 		totalErrors := calculateTotalErrors(positiveStream.Hits, totalHits)
 		healthScore := calculateHealthScore(totalErrors, totalHits)
 		healthy := isHealthy(healthScore, errorThreshold)
-		results = append(results, dtos.ResultLogStreamDTO{
+		results = append(results, selectors.ResultLogStreamDTO{
 			ContainerName:  containerName,
 			Namespace:      namespace,
 			TotalErrors:    totalErrors,
@@ -36,13 +30,13 @@ func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []dtos.LogStream
 	return results, nil
 }
 
-func retrievePositiveLogStreams(positiveStreams []dtos.LogStreamDTO, stream dtos.LogStreamDTO) dtos.LogStreamDTO {
+func retrievePositiveLogStreams(positiveStreams []selectors.LogsStreamsDTO, stream selectors.LogsStreamsDTO) selectors.LogsStreamsDTO {
 	for _, positiveStream := range positiveStreams {
 		if positiveStream.KubernetesNamespace == stream.KubernetesNamespace && positiveStream.KubernetesContainerName == stream.KubernetesContainerName {
 			return positiveStream
 		}
 	}
-	return dtos.LogStreamDTO{}
+	return selectors.LogsStreamsDTO{}
 }
 
 func calculateHealthScore(totalErrors int, total int) float32 {

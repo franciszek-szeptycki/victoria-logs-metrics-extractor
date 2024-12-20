@@ -13,11 +13,11 @@ func NewConvertLogsToMetricsFactory() *ConvertLogsToMetricsFactory {
 	return &ConvertLogsToMetricsFactory{}
 }
 
-func (f *ConvertLogsToMetricsFactory) Execute(victoriaLogsUrl string) *use_cases.ConvertLogsToMetricsUseCase {
+func (f *ConvertLogsToMetricsFactory) Execute() *use_cases.ConvertLogsToMetricsUseCase {
 	// Create instances of the required components
-	connector := connectors.NewVictoriaLogsStreamsConnector(victoriaLogsUrl)
-	analyzeLogStreamsService := services.NewAnalyzeLogStreamsService()
-	jsonPresenter := presenters.NewJSONPresenter()
+	connector := connectors.NewVictoriaLogsStreamsConnector()
+	analyzeLogStreamsService := &services.AnalyzeLogStreamsService{}
+	jsonPresenter := &presenters.JSONPresenter{}
 
 	// Return the new use case
 	return use_cases.NewConvertLogsToMetricsUseCase(connector, analyzeLogStreamsService, jsonPresenter)
