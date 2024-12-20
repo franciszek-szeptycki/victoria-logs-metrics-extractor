@@ -16,19 +16,16 @@ type VictoriaLogsStreamsConnector struct {
 	logTimeframeMinutes int
 }
 
-func NewVictoriaLogsStreamsConnector(url string, logTimeframeMinutes int) *VictoriaLogsStreamsConnector {
-	return &VictoriaLogsStreamsConnector{
-    	  url: url,
-    	  logTimeframeMinutes: logTimeframeMinutes,
-	}
+func NewVictoriaLogsStreamsConnector() *VictoriaLogsStreamsConnector {
+	return &VictoriaLogsStreamsConnector{}
 }
 
-func (v *VictoriaLogsStreamsConnector) FetchStreams(query string) (FetchStreamsResponseValueDTO, error) {
-	fullURL := fmt.Sprintf("%s%s", config.VictoriaLogsURL, constants.StreamsPath)
+func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg config.Config, query string) (FetchStreamsResponseValueDTO, error) {
+	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.StreamsPath)
 
 	payload := map[string]string{
 		"query": query,
-		"start": fmt.Sprintf("%dm", config.LogTimeframeMinutes),
+		"start": fmt.Sprintf("%dm", cfg.LogTimeframeMinutes),
 	}
 
 	response, err := makePostRequest(fullURL, payload)

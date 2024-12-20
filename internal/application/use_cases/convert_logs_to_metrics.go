@@ -4,6 +4,7 @@ import (
 	"log"
 	"main/internal/application/services"
 	"main/internal/constants"
+	"main/internal/infrastructure/config"
 	"main/internal/infrastructure/connectors"
 	"main/internal/infrastructure/presenters"
 )
@@ -26,13 +27,13 @@ func NewConvertLogsToMetricsUseCase(
 	}
 }
 
-func (c *ConvertLogsToMetricsUseCase) Execute() {
-	allstreams, err := c.victoriaLogsConnector.FetchStreams(constants.AllStreamsHitsQuery)
+func (c *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
+	allstreams, err := c.victoriaLogsConnector.FetchStreams(cfg, constants.AllStreamsHitsQuery)
 	if err != nil {
 		log.Fatalln(err)
 		return
 	}
-	positivestreams, err := c.victoriaLogsConnector.FetchStreams(constants.PositiveHitsQuery)
+	positivestreams, err := c.victoriaLogsConnector.FetchStreams(cfg, constants.PositiveHitsQuery)
 	if err != nil {
 		log.Fatalln(err)
 		return
