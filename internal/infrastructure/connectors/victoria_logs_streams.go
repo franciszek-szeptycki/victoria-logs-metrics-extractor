@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"main/internal/application/constants"
 	"main/internal/application/selectors"
-	"main/internal/constants"
-	"main/internal/infrastructure/config"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -27,7 +26,7 @@ func NewVictoriaLogsStreamsConnector() *VictoriaLogsStreamsConnector {
 	return &VictoriaLogsStreamsConnector{}
 }
 
-func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg config.Config, query string) selectors.FetchStreamsResponse {
+func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg selectors.Config, query string) selectors.FetchStreamsResponse {
 	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.StreamsPath)
 	payload := map[string]string{
 		"query": query,

@@ -2,9 +2,9 @@ package use_cases
 
 import (
 	"log"
+	"main/internal/application/constants"
+	"main/internal/application/selectors"
 	"main/internal/application/services"
-	"main/internal/constants"
-	"main/internal/infrastructure/config"
 	"main/internal/infrastructure/connectors"
 	"main/internal/infrastructure/presenters"
 )
@@ -30,7 +30,7 @@ func NewConvertLogsToMetricsUseCase(
 	}
 }
 
-func (c *ConvertLogsToMetricsUseCase) Execute(cfg config.Config) {
+func (c *ConvertLogsToMetricsUseCase) Execute(cfg selectors.Config) {
 	allstreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.AllStreamsHitsQuery)
 	positivestreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.PositiveHitsQuery)
 

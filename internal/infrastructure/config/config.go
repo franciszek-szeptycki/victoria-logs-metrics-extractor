@@ -2,22 +2,17 @@ package config
 
 import (
 	"log"
+	"main/internal/application/selectors"
 	"os"
 	"strconv"
 )
 
-type Config struct {
-	VictoriaLogsURL     string
-	LogTimeframeMinutes int
-	ErrorThreshold      float32
-}
-
-func Init() Config {
+func Init() selectors.Config {
 	victoriaLogsURL := loadVictoriaLogsURL()
 	logTimeframeMinutes := loadLogTimeframeMinutes()
 	errorThreshold := loadErrorThreshold()
 
-	return Config{
+	return selectors.Config{
 		VictoriaLogsURL:     victoriaLogsURL,
 		LogTimeframeMinutes: logTimeframeMinutes,
 		ErrorThreshold:      errorThreshold,
