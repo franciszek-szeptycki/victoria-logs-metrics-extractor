@@ -1,28 +1,34 @@
-package external
+package connectors
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"main/internal/config"
+	"main/internal/application/dtos"
 	"main/internal/constants"
 	"regexp"
 
 	"github.com/go-resty/resty/v2"
 )
 
-type LogStreamDTO struct {
-	KubernetesNamespace     string `json:"kubernetes.namespace"`
-	KubernetesContainerName string `json:"kubernetes.container_name"`
-	Hits                    int    `json:"hits"`
+type VictoriaLogsStreamsConnector struct {
+	url                 string
+	logTimeframeMinutes int
 }
 
-func FetchStreams(cfg config.Config, query string) ([]LogStreamDTO, error) {
-	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.StreamsPath)
+func NewVictoriaLogsStreamsConnector(url string, logTimeframeMinutes int) *VictoriaLogsStreamsConnector {
+	return &VictoriaLogsStreamsConnector{
+		url:                 url,
+		logTimeframeMinutes: logTimeframeMinutes,
+	}
+}
+
+func (v *VictoriaLogsStreamsConnector) FetchStreams(query string) ([]dtos.LogStreamDTO, error) {
+	fullURL := fmt.Sprintf("%s%s", v.url, constants.StreamsPath)
 
 	payload := map[string]string{
 		"query": query,
-		"start": fmt.Sprintf("%dm", cfg.LogTimeframeMinutes),
+		"start": fmt.Sprintf("%dm", v.logTimeframeMinutes),
 	}
 
 	response, err := makePostRequest(fullURL, payload)
