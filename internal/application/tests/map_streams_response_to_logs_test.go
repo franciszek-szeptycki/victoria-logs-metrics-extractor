@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"main/internal/application/selectors"
+	"main/internal/application/services"
 	"testing"
 )
 
@@ -27,7 +28,7 @@ func TestFetchLogsStreamsMapper(t *testing.T) {
 		},
 	}
 
-	mapper := NewFetchLogsStreamsMapper()
+	mapper := services.NewFetchLogsStreamsMapper()
 	output := mapper.MapStreamsResponseToLogs(input)
 
 	if !compareLogsStreamsDTOs(expectedOutput, output) {
