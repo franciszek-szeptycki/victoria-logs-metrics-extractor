@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestVictoriaLogsConnector(t *testing.T) {
+func TestVictoriaLogsConnectorFetchStreams(t *testing.T) {
 
 	connector := connectors.NewVictoriaLogsConnector()
 

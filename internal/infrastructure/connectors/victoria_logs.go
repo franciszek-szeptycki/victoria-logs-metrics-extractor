@@ -68,10 +68,12 @@ func (v *VictoriaLogsConnector) post(httpRequest httpRequest) httpResponse {
 	}
 }
 
-func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, LogStreamDTO selectors.LogStreamDTO) {
+func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, logStreamDTO selectors.LogStreamDTO) {
 	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.VictoriaLogsApiPathQuery)
+
+	query := fmt.Sprintf("kubernetes.pod_namespace:%s AND kubernetes.container_name:%s", logStreamDTO.KubernetesNamespace, logStreamDTO.KubernetesContainerName)
 	payload := map[string]string{
-		"query": constants.VictoriaLogsApiPathQuery,
+		"query": query,
 		"limit": "1",
 	}
 
