@@ -20,13 +20,13 @@ type httpResponse struct {
 	Body   string
 }
 
-type VictoriaLogsStreamsConnector struct{}
+type VictoriaLogsConnector struct{}
 
-func NewVictoriaLogsStreamsConnector() *VictoriaLogsStreamsConnector {
-	return &VictoriaLogsStreamsConnector{}
+func NewVictoriaLogsConnector() *VictoriaLogsConnector {
+	return &VictoriaLogsConnector{}
 }
 
-func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg selectors.Config, query string) selectors.FetchStreamsResponse {
+func (v *VictoriaLogsConnector) FetchStreams(cfg selectors.Config, query string) selectors.FetchStreamsResponse {
 	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.StreamsPath)
 	payload := map[string]string{
 		"query": query,
@@ -51,7 +51,7 @@ func (v *VictoriaLogsStreamsConnector) FetchStreams(cfg selectors.Config, query 
 	return streamsResponse
 }
 
-func (v *VictoriaLogsStreamsConnector) post(httpRequest httpRequest) httpResponse {
+func (v *VictoriaLogsConnector) post(httpRequest httpRequest) httpResponse {
 	client := resty.New().R().
 		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetFormData(httpRequest.Body)

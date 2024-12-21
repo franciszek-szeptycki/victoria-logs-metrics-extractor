@@ -10,14 +10,14 @@ import (
 )
 
 type ConvertLogsToMetricsUseCase struct {
-	victoriaLogsConnector    *connectors.VictoriaLogsStreamsConnector
+	victoriaLogsConnector    *connectors.VictoriaLogsConnector
 	mapStreamsResponseToLogs *services.FetchLogsStreamsMapper
 	analyzeLogStreamsService *services.AnalyzeLogStreamsService
 	jsonPresenter            *presenters.JSONPresenter
 }
 
 func NewConvertLogsToMetricsUseCase(
-	victoriaLogsConnector *connectors.VictoriaLogsStreamsConnector,
+	victoriaLogsConnector *connectors.VictoriaLogsConnector,
 	mapStreamsResponseToLogs *services.FetchLogsStreamsMapper,
 	analyzeLogStreamsService *services.AnalyzeLogStreamsService,
 	jsonPresenter *presenters.JSONPresenter,
