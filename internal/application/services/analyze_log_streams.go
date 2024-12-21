@@ -4,7 +4,7 @@ import "main/internal/application/selectors"
 
 type AnalyzeLogStreamsService struct{}
 
-func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []selectors.LogsStreamsDTO, positiveStreams []selectors.LogsStreamsDTO, errorThreshold float32) ([]selectors.ResultLogStreamDTO, error) {
+func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []selectors.LogStreamDTO, positiveStreams []selectors.LogStreamDTO, errorThreshold float32) ([]selectors.ResultLogStreamDTO, error) {
 
 	var results []selectors.ResultLogStreamDTO
 	for _, stream := range allStreams {
@@ -30,13 +30,13 @@ func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []selectors.Logs
 	return results, nil
 }
 
-func retrievePositiveLogStreams(positiveStreams []selectors.LogsStreamsDTO, stream selectors.LogsStreamsDTO) selectors.LogsStreamsDTO {
+func retrievePositiveLogStreams(positiveStreams []selectors.LogStreamDTO, stream selectors.LogStreamDTO) selectors.LogStreamDTO {
 	for _, positiveStream := range positiveStreams {
 		if positiveStream.KubernetesNamespace == stream.KubernetesNamespace && positiveStream.KubernetesContainerName == stream.KubernetesContainerName {
 			return positiveStream
 		}
 	}
-	return selectors.LogsStreamsDTO{}
+	return selectors.LogStreamDTO{}
 }
 
 func calculateHealthScore(totalErrors int, total int) float32 {

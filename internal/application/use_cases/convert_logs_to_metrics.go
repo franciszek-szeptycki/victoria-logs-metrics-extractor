@@ -31,8 +31,8 @@ func NewConvertLogsToMetricsUseCase(
 }
 
 func (c *ConvertLogsToMetricsUseCase) Execute(cfg selectors.Config) {
-	allstreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.AllStreamsHitsQuery)
-	positivestreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.PositiveHitsQuery)
+	allstreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.LogsQLQueryAllStreams)
+	positivestreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.LogsQLQueryPositiveStreams)
 
 	allStreamsLogs := c.mapStreamsResponseToLogs.MapStreamsResponseToLogs(allstreams)
 	positiveStreamsLogs := c.mapStreamsResponseToLogs.MapStreamsResponseToLogs(positivestreams)

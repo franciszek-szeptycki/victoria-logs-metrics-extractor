@@ -27,7 +27,7 @@ func NewVictoriaLogsConnector() *VictoriaLogsConnector {
 }
 
 func (v *VictoriaLogsConnector) FetchStreams(cfg selectors.Config, query string) selectors.FetchStreamsResponse {
-	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.StreamsPath)
+	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.VictoriaLogsApiPathStreams)
 	payload := map[string]string{
 		"query": query,
 		"start": fmt.Sprintf("%dm", cfg.LogTimeframeMinutes),
@@ -65,5 +65,28 @@ func (v *VictoriaLogsConnector) post(httpRequest httpRequest) httpResponse {
 	return httpResponse{
 		Status: resp.StatusCode(),
 		Body:   resp.String(),
+	}
+}
+
+func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, LogStreamDTO selectors.LogStreamDTO) {
+	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.VictoriaLogsApiPathQuery)
+	payload := map[string]string{
+		"query": constants.VictoriaLogsApiPathQuery,
+		"limit": "1",
+	}
+
+	httpResponse := v.post(httpRequest{
+		URL:  fullURL,
+		Body: payload,
+	})
+
+	if httpResponse.Status != 200 {
+		log.Fatalf("Error fetching logs: %s", httpResponse.Body)
+	}
+
+	var logsResponse selectors.FetchStreamsResponse
+	err := json.Unmarshal([]byte(httpResponse.Body), &logsResponse)
+	if err != nil {
+		log.Fatalf("Error unmarshalling logs response: %s", err)
 	}
 }

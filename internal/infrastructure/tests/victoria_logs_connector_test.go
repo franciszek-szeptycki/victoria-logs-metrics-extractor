@@ -18,7 +18,7 @@ func TestVictoriaLogsConnector(t *testing.T) {
 		ErrorThreshold:      0.5,
 	}
 
-	query := constants.AllStreamsHitsQuery
+	query := constants.LogsQLQueryAllStreams
 	output := connector.FetchStreams(cfg, query)
 
 	if len(output.Values) == 0 {

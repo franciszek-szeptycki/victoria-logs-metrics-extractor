@@ -16,7 +16,7 @@ func TestFetchLogsStreamsMapper(t *testing.T) {
 		t.Errorf("Error marshalling JSON: %s", err)
 	}
 
-	expectedOutput := []selectors.LogsStreamsDTO{
+	expectedOutput := []selectors.LogStreamDTO{
 		{
 			KubernetesNamespace:     "kube-system",
 			KubernetesContainerName: "coredns",
@@ -31,12 +31,12 @@ func TestFetchLogsStreamsMapper(t *testing.T) {
 	mapper := services.NewFetchLogsStreamsMapper()
 	output := mapper.MapStreamsResponseToLogs(input)
 
-	if !compareLogsStreamsDTOs(expectedOutput, output) {
+	if !compareLogStreamDTOs(expectedOutput, output) {
 		t.Errorf("Expected output: %v, got: %v", expectedOutput, output)
 	}
 }
 
-func compareLogsStreamsDTOs(a, b []selectors.LogsStreamsDTO) bool {
+func compareLogStreamDTOs(a, b []selectors.LogStreamDTO) bool {
 	if len(a) != len(b) {
 		return false
 	}

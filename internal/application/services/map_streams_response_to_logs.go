@@ -13,11 +13,11 @@ func NewFetchLogsStreamsMapper() *FetchLogsStreamsMapper {
 	return &FetchLogsStreamsMapper{}
 }
 
-func (m *FetchLogsStreamsMapper) MapStreamsResponseToLogs(input selectors.FetchStreamsResponse) []selectors.LogsStreamsDTO {
+func (m *FetchLogsStreamsMapper) MapStreamsResponseToLogs(input selectors.FetchStreamsResponse) []selectors.LogStreamDTO {
 
 	fmt.Println("input", input)
 
-	outputArray := []selectors.LogsStreamsDTO{}
+	outputArray := []selectors.LogStreamDTO{}
 	for _, stream := range input.Values {
 
 		regexContainerName := regexp.MustCompile(`kubernetes\.container_name="([^"]+)"`)
@@ -31,7 +31,7 @@ func (m *FetchLogsStreamsMapper) MapStreamsResponseToLogs(input selectors.FetchS
 			continue
 		}
 
-		outputArray = append(outputArray, selectors.LogsStreamsDTO{
+		outputArray = append(outputArray, selectors.LogStreamDTO{
 			KubernetesNamespace:     namespaceMatch[1],
 			KubernetesContainerName: containerNameMatch[1],
 			Hits:                    stream.Hits,
