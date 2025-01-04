@@ -6,3 +6,7 @@ type FetchStreamsResponse struct {
 		Hits  int    `json:"hits"`
 	} `json:"values"`
 }
+
+type LastLogReponse struct {
+	CustomErrorThreshold *float32 `json:"kubernetes.pod_labels.custom_error_threshold"`
+}

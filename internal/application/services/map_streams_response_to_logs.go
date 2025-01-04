@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"log"
 	"main/internal/application/selectors"
 	"regexp"
@@ -14,8 +13,6 @@ func NewFetchLogsStreamsMapper() *FetchLogsStreamsMapper {
 }
 
 func (m *FetchLogsStreamsMapper) MapStreamsResponseToLogs(input selectors.FetchStreamsResponse) []selectors.LogStreamDTO {
-
-	fmt.Println("input", input)
 
 	outputArray := []selectors.LogStreamDTO{}
 	for _, stream := range input.Values {

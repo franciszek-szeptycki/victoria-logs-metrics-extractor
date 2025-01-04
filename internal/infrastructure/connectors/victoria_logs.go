@@ -68,7 +68,7 @@ func (v *VictoriaLogsConnector) post(httpRequest httpRequest) httpResponse {
 	}
 }
 
-func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, logStreamDTO selectors.LogStreamDTO) {
+func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, logStreamDTO selectors.LogStreamDTO) selectors.LastLogReponse {
 	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.VictoriaLogsApiPathQuery)
 
 	query := fmt.Sprintf("kubernetes.pod_namespace:%s AND kubernetes.container_name:%s", logStreamDTO.KubernetesNamespace, logStreamDTO.KubernetesContainerName)
@@ -82,13 +82,16 @@ func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, logStreamDTO 
 		Body: payload,
 	})
 
+	fmt.Println(httpResponse)
+
 	if httpResponse.Status != 200 {
 		log.Fatalf("Error fetching logs: %s", httpResponse.Body)
 	}
 
-	var logsResponse selectors.FetchStreamsResponse
-	err := json.Unmarshal([]byte(httpResponse.Body), &logsResponse)
+	var lastLogResponse selectors.LastLogReponse
+	err := json.Unmarshal([]byte(httpResponse.Body), &lastLogResponse)
 	if err != nil {
 		log.Fatalf("Error unmarshalling logs response: %s", err)
 	}
+	return lastLogResponse
 }
