@@ -2,20 +2,19 @@ package config
 
 import (
 	"log"
-	"main/internal/application/selectors"
 	"os"
 	"strconv"
 )
 
-func LoadEnv() selectors.Config {
-	victoriaLogsURL := loadVictoriaLogsURL()
-	logTimeframeMinutes := loadLogTimeframeMinutes()
-	errorThreshold := loadErrorThreshold()
+type ConnectorConfig struct {
+	VictoriaLogsURL     string
+	LogTimeframeMinutes int
+}
 
-	return selectors.Config{
-		VictoriaLogsURL:     victoriaLogsURL,
-		LogTimeframeMinutes: logTimeframeMinutes,
-		ErrorThreshold:      errorThreshold,
+func LoadConnectorConfig() ConnectorConfig {
+	return ConnectorConfig{
+		VictoriaLogsURL:     loadVictoriaLogsURL(),
+		LogTimeframeMinutes: loadLogTimeframeMinutes(),
 	}
 }
 
@@ -38,17 +37,4 @@ func loadLogTimeframeMinutes() int {
 		log.Fatal("Environment variable LOG_TIMEFRAME_MINUTES must be a positive integer")
 	}
 	return logTimeframeMinutes
-}
-
-func loadErrorThreshold() float32 {
-	errorThresholdStr := os.Getenv("ERROR_THRESHOLD")
-	if errorThresholdStr == "" {
-		log.Fatal("Environment variable ERROR_THRESHOLD is required but not set")
-	}
-
-	errorThreshold, err := strconv.ParseFloat(errorThresholdStr, 32)
-	if err != nil {
-		log.Fatal("Environment variable ERROR_THRESHOLD must be a float")
-	}
-	return float32(errorThreshold)
 }

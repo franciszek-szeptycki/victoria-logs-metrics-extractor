@@ -2,56 +2,41 @@ package services
 
 import "main/internal/application/selectors"
 
-type AnalyzeLogStreamsService struct{}
+type AnalyzeMetricsService struct{}
 
-func (a *AnalyzeLogStreamsService) AnalyzeLogStreams(allStreams []selectors.LogStreamDTO, positiveStreams []selectors.LogStreamDTO, errorThreshold float32) ([]selectors.ResultLogStreamDTO, error) {
+func (a *AnalyzeMetricsService) Execute(resourceMetricsWithThresholds []selectors.ResourceMetricsWithErrorThresholdDTO) []selectors.MetricsOutputDTO {
 
-	var results []selectors.ResultLogStreamDTO
-	for _, stream := range allStreams {
-		positiveStream := retrievePositiveLogStreams(positiveStreams, stream)
-
-		containerName := stream.KubernetesContainerName
-		namespace := stream.KubernetesNamespace
-		totalHits := stream.Hits
-		totalErrors := calculateTotalErrors(positiveStream.Hits, totalHits)
-		healthScore := calculateHealthScore(totalErrors, totalHits)
-		healthy := isHealthy(healthScore, errorThreshold)
-		results = append(results, selectors.ResultLogStreamDTO{
-			ContainerName:  containerName,
-			Namespace:      namespace,
-			TotalErrors:    totalErrors,
-			Total:          totalHits,
-			HealthScore:    healthScore,
-			ErrorThreshold: errorThreshold,
-			Healthy:        healthy,
+	outputArray := []selectors.MetricsOutputDTO{}
+	for _, dto := range resourceMetricsWithThresholds {
+		outputArray = append(outputArray, selectors.MetricsOutputDTO{
+			Resource:       dto.Resource,
+			All:            dto.AllHits,
+			Succeded:       dto.PositiveHits,
+			Errors:         a.calculateErrors(dto),
+			ErrorRate:      a.calculateErrorRate(dto),
+			HealthScore:    a.calculateHealthScore(dto),
+			IsHealthy:      a.checkIsHealthy(dto),
+			ErrorThreshold: dto.ErrorThreshold,
 		})
 	}
 
-	return results, nil
+	return outputArray
 }
 
-func retrievePositiveLogStreams(positiveStreams []selectors.LogStreamDTO, stream selectors.LogStreamDTO) selectors.LogStreamDTO {
-	for _, positiveStream := range positiveStreams {
-		if positiveStream.KubernetesNamespace == stream.KubernetesNamespace && positiveStream.KubernetesContainerName == stream.KubernetesContainerName {
-			return positiveStream
-		}
-	}
-	return selectors.LogStreamDTO{}
+func (a *AnalyzeMetricsService) calculateErrors(dto selectors.ResourceMetricsWithErrorThresholdDTO) int {
+	return dto.AllHits - dto.PositiveHits
 }
 
-func calculateHealthScore(totalErrors int, total int) float32 {
-	if total != 0 {
-		return 1 - (float32(totalErrors) / float32(total))
-	}
-	return 1
+func (a *AnalyzeMetricsService) calculateErrorRate(dto selectors.ResourceMetricsWithErrorThresholdDTO) float32 {
+	return float32(a.calculateErrors(dto)) / float32(dto.AllHits)
 }
 
-func calculateTotalErrors(positiveHits int, totalHits int) int {
-	return totalHits - positiveHits
+func (a *AnalyzeMetricsService) calculateHealthScore(dto selectors.ResourceMetricsWithErrorThresholdDTO) float32 {
+	return 1 - a.calculateErrorRate(dto)
 }
 
-func isHealthy(healthScore float32, errorThreshold float32) int {
-	if healthScore >= 1-errorThreshold {
+func (a *AnalyzeMetricsService) checkIsHealthy(dto selectors.ResourceMetricsWithErrorThresholdDTO) int {
+	if a.calculateErrorRate(dto) <= dto.ErrorThreshold {
 		return 1
 	}
 	return 0

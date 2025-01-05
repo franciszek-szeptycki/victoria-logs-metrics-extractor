@@ -20,17 +20,40 @@ type httpResponse struct {
 	Body   string
 }
 
-type VictoriaLogsConnector struct{}
-
-func NewVictoriaLogsConnector() *VictoriaLogsConnector {
-	return &VictoriaLogsConnector{}
+type victoriaLogsConnector struct {
+	url          string
+	logTimeframe int
 }
 
-func (v *VictoriaLogsConnector) FetchStreams(cfg selectors.Config, query string) selectors.FetchStreamsResponse {
-	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.VictoriaLogsApiPathStreams)
+func NewVictoriaLogsConnector(url string, logTimeframe int) *victoriaLogsConnector {
+	return &victoriaLogsConnector{
+		url:          url,
+		logTimeframe: logTimeframe,
+	}
+}
+
+func (v *victoriaLogsConnector) post(httpRequest httpRequest) httpResponse {
+	client := resty.New().R().
+		SetHeader("Content-Type", "application/x-www-form-urlencoded").
+		SetFormData(httpRequest.Body)
+
+	resp, err := client.Post(httpRequest.URL)
+
+	if err != nil {
+		log.Fatalf("Error making POST request: %s", err)
+	}
+
+	return httpResponse{
+		Status: resp.StatusCode(),
+		Body:   resp.String(),
+	}
+}
+
+func (v *victoriaLogsConnector) FetchStreams(query string) selectors.FetchStreamsResponse {
+	fullURL := fmt.Sprintf("%s%s", v.url, constants.VictoriaLogsApiPathStreams)
 	payload := map[string]string{
 		"query": query,
-		"start": fmt.Sprintf("%dm", cfg.LogTimeframeMinutes),
+		"start": fmt.Sprintf("%dm", v.logTimeframe),
 	}
 
 	httpResponse := v.post(httpRequest{
@@ -51,27 +74,9 @@ func (v *VictoriaLogsConnector) FetchStreams(cfg selectors.Config, query string)
 	return streamsResponse
 }
 
-func (v *VictoriaLogsConnector) post(httpRequest httpRequest) httpResponse {
-	client := resty.New().R().
-		SetHeader("Content-Type", "application/x-www-form-urlencoded").
-		SetFormData(httpRequest.Body)
+func (v *victoriaLogsConnector) FetchLastLog(query string) selectors.LastLogReponse {
+	fullURL := fmt.Sprintf("%s%s", v.url, constants.VictoriaLogsApiPathQuery)
 
-	resp, err := client.Post(httpRequest.URL)
-
-	if err != nil {
-		log.Fatalf("Error making POST request: %s", err)
-	}
-
-	return httpResponse{
-		Status: resp.StatusCode(),
-		Body:   resp.String(),
-	}
-}
-
-func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, logStreamDTO selectors.LogStreamDTO) selectors.LastLogReponse {
-	fullURL := fmt.Sprintf("%s%s", cfg.VictoriaLogsURL, constants.VictoriaLogsApiPathQuery)
-
-	query := fmt.Sprintf("kubernetes.pod_namespace:%s AND kubernetes.container_name:%s", logStreamDTO.KubernetesNamespace, logStreamDTO.KubernetesContainerName)
 	payload := map[string]string{
 		"query": query,
 		"limit": "1",
@@ -82,10 +87,8 @@ func (v *VictoriaLogsConnector) FetchLastLog(cfg selectors.Config, logStreamDTO 
 		Body: payload,
 	})
 
-	fmt.Println(httpResponse)
-
 	if httpResponse.Status != 200 {
-		log.Fatalf("Error fetching logs: %s", httpResponse.Body)
+		log.Fatalf("Error fetching logs: %s, status: %d", httpResponse.Body, httpResponse.Status)
 	}
 
 	var lastLogResponse selectors.LastLogReponse

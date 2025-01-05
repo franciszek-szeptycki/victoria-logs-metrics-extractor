@@ -8,5 +8,6 @@ type FetchStreamsResponse struct {
 }
 
 type LastLogReponse struct {
-	CustomErrorThreshold *float32 `json:"kubernetes.pod_labels.custom_error_threshold"`
+	// CustomErrorThreshold string `json:"kubernetes.pod_labels.custom_error_threshold"`
+	CustomErrorThreshold string `json:"kubernetes.pod_labels.apps.kubernetes.io/pod-index"`
 }

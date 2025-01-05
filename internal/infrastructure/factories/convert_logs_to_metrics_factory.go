@@ -3,6 +3,7 @@ package factories
 import (
 	"main/internal/application/services"
 	"main/internal/application/use_cases"
+	"main/internal/infrastructure/config"
 	"main/internal/infrastructure/connectors"
 	"main/internal/infrastructure/presenters"
 )
@@ -14,12 +15,25 @@ func NewConvertLogsToMetricsFactory() *ConvertLogsToMetricsFactory {
 }
 
 func (f *ConvertLogsToMetricsFactory) Execute() *use_cases.ConvertLogsToMetricsUseCase {
-	// Create instances of the required components
-	connector := connectors.NewVictoriaLogsConnector()
-	mapStreamsResponseToLogs := &services.FetchLogsStreamsMapper{}
-	analyzeLogStreamsService := &services.AnalyzeLogStreamsService{}
-	jsonPresenter := &presenters.JSONPresenter{}
 
-	// Return the new use case
-	return use_cases.NewConvertLogsToMetricsUseCase(connector, mapStreamsResponseToLogs, analyzeLogStreamsService, jsonPresenter)
+	cfg := config.LoadConnectorConfig()
+
+	connector := connectors.NewVictoriaLogsConnector(
+		cfg.VictoriaLogsURL,
+		cfg.LogTimeframeMinutes,
+	)
+
+	retrieveResourceMetricsService := services.NewRetrieveResourceMetricsService(connector)
+	retrieveResourceMetricsWithErrorThresholdService := services.NewRetrieveResourceMetricsWithErrorThresholdService(connector)
+
+	analyzeMetricsService := &services.AnalyzeMetricsService{}
+
+	k8sJsonPresenter := &presenters.K8sJsonPresenter{}
+
+	return use_cases.NewConvertLogsToMetricsUseCase(
+		retrieveResourceMetricsService,
+		retrieveResourceMetricsWithErrorThresholdService,
+		analyzeMetricsService,
+		k8sJsonPresenter,
+	)
 }

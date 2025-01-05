@@ -1,52 +1,40 @@
 package use_cases
 
 import (
-	"log"
-	"main/internal/application/constants"
 	"main/internal/application/selectors"
 	"main/internal/application/services"
-	"main/internal/infrastructure/connectors"
-	"main/internal/infrastructure/presenters"
 )
 
 type ConvertLogsToMetricsUseCase struct {
-	victoriaLogsConnector    *connectors.VictoriaLogsConnector
-	mapStreamsResponseToLogs *services.FetchLogsStreamsMapper
-	analyzeLogStreamsService *services.AnalyzeLogStreamsService
-	jsonPresenter            *presenters.JSONPresenter
+	retrieveMetricsService                           *services.RetrieveResourceMetricsService
+	retrieveResourceMetricsWithErrorThresholdService *services.RetrieveResourceMetricsWithErrorThresholdService
+	analyzeMetricsService                            *services.AnalyzeMetricsService
+	presenter                                        selectors.PresenterInterface
 }
 
 func NewConvertLogsToMetricsUseCase(
-	victoriaLogsConnector *connectors.VictoriaLogsConnector,
-	mapStreamsResponseToLogs *services.FetchLogsStreamsMapper,
-	analyzeLogStreamsService *services.AnalyzeLogStreamsService,
-	jsonPresenter *presenters.JSONPresenter,
+	retrieveMetricsService *services.RetrieveResourceMetricsService,
+	retrieveResourceMetricsWithErrorThresholdService *services.RetrieveResourceMetricsWithErrorThresholdService,
+	analyzeMetricsService *services.AnalyzeMetricsService,
+	presenter selectors.PresenterInterface,
 ) *ConvertLogsToMetricsUseCase {
 	return &ConvertLogsToMetricsUseCase{
-		victoriaLogsConnector:    victoriaLogsConnector,
-		analyzeLogStreamsService: analyzeLogStreamsService,
-		mapStreamsResponseToLogs: mapStreamsResponseToLogs,
-		jsonPresenter:            jsonPresenter,
+		retrieveMetricsService:                           retrieveMetricsService,
+		retrieveResourceMetricsWithErrorThresholdService: retrieveResourceMetricsWithErrorThresholdService,
+		analyzeMetricsService:                            analyzeMetricsService,
+		presenter:                                        presenter,
 	}
 }
 
-func (c *ConvertLogsToMetricsUseCase) Execute(cfg selectors.Config) {
-	allstreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.LogsQLQueryAllStreams)
-	positivestreams := c.victoriaLogsConnector.FetchStreams(cfg, constants.LogsQLQueryPositiveStreams)
+func (c *ConvertLogsToMetricsUseCase) Execute() {
 
-	allStreamsLogs := c.mapStreamsResponseToLogs.MapStreamsResponseToLogs(allstreams)
-	positiveStreamsLogs := c.mapStreamsResponseToLogs.MapStreamsResponseToLogs(positivestreams)
+	// UNIWERSALNE!!!!
+	resourceMetrics := c.retrieveMetricsService.Execute()
 
-	log.Println("All streams: ", allstreams)
-	log.Println("Positive streams: ", positivestreams)
+	// TO TEŻ!!!!
+	resourceMetricsWithErrorThreshold := c.retrieveResourceMetricsWithErrorThresholdService.Execute(resourceMetrics)
 
-	errorThreshold := cfg.ErrorThreshold
+	output := c.analyzeMetricsService.Execute(resourceMetricsWithErrorThreshold)
 
-	results, err := c.analyzeLogStreamsService.AnalyzeLogStreams(allStreamsLogs, positiveStreamsLogs, errorThreshold)
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
-
-	c.jsonPresenter.Present(results)
+	c.presenter.Present(output)
 }
