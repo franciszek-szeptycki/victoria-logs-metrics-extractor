@@ -35,7 +35,7 @@ func (r *RetrieveResourceMetricsWithErrorThresholdService) getErrorThreshold(dto
 	fetchLastLogResponse := r.connector.FetchLastLog(dto.Resource)
 	customErrorThreshold := fetchLastLogResponse.CustomErrorThreshold
 
-	if customErrorThreshold != "" {
+	if customErrorThreshold == "" {
 		return constants.DefaultErrorThreshold
 	}
 

@@ -28,10 +28,8 @@ func NewConvertLogsToMetricsUseCase(
 
 func (c *ConvertLogsToMetricsUseCase) Execute() {
 
-	// UNIWERSALNE!!!!
 	resourceMetrics := c.retrieveMetricsService.Execute()
 
-	// TO TEŻ!!!!
 	resourceMetricsWithErrorThreshold := c.retrieveResourceMetricsWithErrorThresholdService.Execute(resourceMetrics)
 
 	output := c.analyzeMetricsService.Execute(resourceMetricsWithErrorThreshold)

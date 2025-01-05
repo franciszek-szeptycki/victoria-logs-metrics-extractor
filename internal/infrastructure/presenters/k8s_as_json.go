@@ -12,10 +12,13 @@ type K8sJsonPresenter struct{}
 type K8sJsonOutput struct {
 	ContainerName  string  `json:"containerName"`
 	Namespace      string  `json:"namespace"`
-	TotalErrors    int     `json:"totalErrors"`
 	Total          int     `json:"total"`
-	HealthScore    float32 `json:"healthScore"`
+	TotalSuccess   int     `json:"totalSuccess"`
+	TotalErrors    int     `json:"totalErrors"`
 	ErrorThreshold float32 `json:"errorThreshold"`
+	ErrorRate      float32 `json:"errorRate"`
+	HealthScore    float32 `json:"healthScore"`
+	IsHealthy      int     `json:"isHealthy"`
 }
 
 func (k *K8sJsonPresenter) Present(output []selectors.MetricsOutputDTO) {
@@ -28,10 +31,13 @@ func (k *K8sJsonPresenter) Present(output []selectors.MetricsOutputDTO) {
 		k8sJsonOutput = append(k8sJsonOutput, K8sJsonOutput{
 			ContainerName:  containerName,
 			Namespace:      namespace,
-			TotalErrors:    o.Errors,
 			Total:          o.All,
-			HealthScore:    o.HealthScore,
+			TotalSuccess:   o.Succeded,
+			TotalErrors:    o.Errors,
 			ErrorThreshold: o.ErrorThreshold,
+			ErrorRate:      o.ErrorRate,
+			HealthScore:    o.HealthScore,
+			IsHealthy:      o.IsHealthy,
 		})
 	}
 

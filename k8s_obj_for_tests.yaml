@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-generator
+  labels:
+    app: log-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-generator
+  template:
+    metadata:
+      labels:
+        app: log-generator
+        custom_error_threshold: "0.05"
+    spec:
+      containers:
+        - name: log-generator
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                if [ $((RANDOM % 7)) -eq 0 ]; then
+                  echo "$(date) - ERROR: Critical failure encountered!" >&2;
+                else
+                  echo "$(date) - INFO: Normal operation";
+                fi;
+                sleep 1;
+              done
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
